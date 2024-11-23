@@ -1,0 +1,56 @@
+package components
+
+import (
+	u "crypto-farm/src/utils"
+)
+
+templ Layout() {
+	<style type="text/css">
+    header {
+      width: calc(100% - 3rem);
+    }
+
+    header h1 {
+      text-align: center;
+      background-image: linear-gradient(to bottom right, #8161ff, #752d58);
+      background-clip: text;
+      flex-grow: 1;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header h1:only-child {
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>One Day One Question</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="description" content="365 questions to track your life's progress and remember every meaningful moment."/>
+			<meta property="og:description" content="365 questions to track your life's progress and remember every meaningful moment."/>
+			<meta property="og:type" content="website"/>
+			<meta property="og:url" content="https://www.onedoq.com/"/>
+			<meta property="og:title" content="One Day One Question"/>
+			<meta property="og:image" content={ u.PublicUrl("images/icon.png") }/>
+      <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+			<script src="https://unpkg.com/htmx.org"></script>
+			<script src={ u.PublicUrl("index.js") }></script>
+			<link rel="stylesheet" type="text/css" href={ u.PublicUrl("styles/out.css") }/>
+			<link rel="stylesheet" type="text/css" href={ u.PublicUrl("styles/global.css") }/>
+		</head>
+		<body>
+			<header
+				class="py-3 px-4 mx-auto items-center flex h-fit bg-primary font-Lilita shadow-xl border-2 border-black"
+			></header>
+			<main
+				class="p-6 selection:bg-secondary selection:text-white"
+			>
+				{ children... }
+			</main>
+		</body>
+	</html>
+}
