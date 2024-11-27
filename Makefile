@@ -11,6 +11,7 @@ start:
 launch:
 	@sudo supervisorctl shutdown
 	@go build -o ./tmp/bot ./main.go
+	@npx tailwindcss -o ./public/styles/out.css
 	@echo Build ends
 	@sudo supervisord -c ./supervisord.conf
 	@echo Started

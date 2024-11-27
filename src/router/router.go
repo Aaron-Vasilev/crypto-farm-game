@@ -1,7 +1,7 @@
 package router
 
 import (
-	handler "crypto-farm/src/hander"
+	"crypto-farm/src/handler"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -15,4 +15,6 @@ func ConnectRoutes(app *echo.Echo) {
 	})
 
 	// APIs
+	app.POST("/api/pot", handler.CreatePot)
+	app.POST("/api/plant", handler.PlantCoin)
 }

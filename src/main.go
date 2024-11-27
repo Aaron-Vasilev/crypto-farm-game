@@ -1,7 +1,7 @@
 package main
 
 import (
-	"crypto-farm/db"
+	"crypto-farm/src/db"
 	"crypto-farm/src/router"
 	"crypto-farm/src/utils"
 	"fmt"
@@ -19,6 +19,7 @@ func main() {
 	app := echo.New()
 
 	db.ConnectDb()
+	defer db.DB.Close()
 	router.ConnectRoutes(app)
 
 	if utils.IsProd() {

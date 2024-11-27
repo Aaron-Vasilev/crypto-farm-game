@@ -16,5 +16,4 @@ func ConnectDb() {
 	} else {
 		DB = db
 	}
-	defer db.Close()
 }
