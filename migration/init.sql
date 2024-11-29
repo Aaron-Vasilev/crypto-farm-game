@@ -16,6 +16,7 @@ CREATE TABLE farm.plant
   id SERIAL PRIMARY KEY,
   user_id BIGINT REFERENCES farm.user(id) NOT NULL,
   coin tickers NOT NULL,
+  amount FLOAT NOT NULL,
   plant_date TIMESTAMP DEFAULT NOW(),
   harvest_date TIMESTAMP,
   plant_price FLOAT NOT NULL,

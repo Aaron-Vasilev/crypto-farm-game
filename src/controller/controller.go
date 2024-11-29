@@ -26,7 +26,7 @@ func CreatePot(userId int64) t.Pot {
 	return pot
 }
 
-func PlantCoin(
+func CreateCoin(
 	userId int64,
 	coin t.Ticker,
 	plantDate, harvestDate time.Time,
@@ -54,6 +54,50 @@ func PlantCoin(
 
 	if err != nil {
 		log.Fatalf("✡️  line 44 err %v", err)
+	}
+
+	return plant, nil
+}
+
+func GetPlant(userId int64, potId int) (t.Plant, error) {
+	var plant t.Plant
+	query := "SELECT * FROM farm.plant WHERE user_id=$1 AND id=$2;"
+
+	err := db.DB.QueryRow(query, userId, potId).Scan(
+		&plant.ID,
+		&plant.UserID,
+		&plant.Coin,
+		&plant.PlantDate,
+		&plant.HarvestDate,
+		&plant.PlantPrice,
+		&plant.HarvestPrice,
+		&plant.Profit,
+	)
+
+	if err != nil {
+		return plant, err
+	}
+
+	return plant, nil
+}
+
+func HarvestPlant(userId int64, plantId int, harvestPrice, profit float32) (t.Plant, error) {
+	var plant t.Plant
+	query := "UPDATE farm.plant SET harvest_price=$1, profit=$2 WHERE user_id=$3 AND id=$4 RETURNING *"
+
+	err := db.DB.QueryRow(query, harvestPrice, profit, userId, plantId).Scan(
+		&plant.ID,
+		&plant.UserID,
+		&plant.Coin,
+		&plant.PlantDate,
+		&plant.HarvestDate,
+		&plant.PlantPrice,
+		&plant.HarvestPrice,
+		&plant.Profit,
+	)
+
+	if err != nil {
+		return plant, err
 	}
 
 	return plant, nil

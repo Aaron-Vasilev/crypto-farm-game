@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto-farm/src/auth"
 	"crypto-farm/src/db"
 	"crypto-farm/src/router"
 	"crypto-farm/src/utils"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
 )
 
@@ -21,10 +23,10 @@ func main() {
 	db.ConnectDb()
 	defer db.DB.Close()
 	router.ConnectRoutes(app)
+	app.Use(auth.Middleware)
 
-	if utils.IsProd() {
-		app.Use(middleware)
-	} else {
+	if !utils.IsProd() {
+		app.Use(middleware.Logger())
 		app.Static("public/", "public/")
 		fmt.Printf("Server started at localhost%s\n", PORT)
 	}
@@ -42,12 +44,5 @@ func loadEnv() {
 		if err != nil {
 			log.Fatal("No .env")
 		}
-	}
-}
-
-func middleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTMLCharsetUTF8)
-		return next(c)
 	}
 }

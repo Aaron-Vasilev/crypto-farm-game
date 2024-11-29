@@ -33,6 +33,7 @@ type Plant struct {
 	ID           int       `json:"id,omitempty"`
 	UserID       int64     `json:"userId,omitempty"`
 	Coin         Ticker    `json:"coin"`
+	Amount       float32   `json:"amount"`
 	PlantDate    time.Time `json:"plantDate,omitempty"`
 	HarvestDate  time.Time `json:"harvestDate,omitempty"`
 	PlantPrice   float32   `json:"plantPrice,omitempty"`
