@@ -1,8 +1,6 @@
 package pages
 
-import "crypto-farm/src/components/layout"
-
-import ()
+import components "crypto-farm/src/components/layout"
 
 type HomeProps struct {
 }
@@ -11,9 +9,9 @@ templ Home(props HomeProps) {
 	@components.Layout() {
 		<div class="px-[10%]">
 			<div class="flex gap-2.5">
-				<div class="w-10 h-10 border-black border-2"></div>
-				<div class="w-10 h-10 border-black border-2"></div>
-				<div class="w-10 h-10 border-black border-2"></div>
+				<div class="h-10 w-10 border-2 border-black"></div>
+				<div class="h-10 w-10 border-2 border-black"></div>
+				<div class="h-10 w-10 border-2 border-black"></div>
 			</div>
 		</div>
 	}

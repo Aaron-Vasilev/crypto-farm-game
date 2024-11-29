@@ -72,8 +72,8 @@ func HarvestCoin(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "The plant doesn't exist",
-			"userId": fmt.Sprintf("%d", userId),
+			"error":   "The plant doesn't exist",
+			"userId":  fmt.Sprintf("%d", userId),
 			"plantId": c.QueryParam("plantId"),
 		})
 	}
@@ -99,4 +99,3 @@ func HarvestCoin(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Plant is not ready"})
 	}
 }
-
