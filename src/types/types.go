@@ -28,17 +28,17 @@ const (
 	USD  Ticker = "USD"
 )
 
-// NOTE not sure that I need it
+// NOTE not sure if I need json
 type Plant struct {
-	ID           int       `json:"id,omitempty"`
-	UserID       int64     `json:"userId,omitempty"`
-	Coin         Ticker    `json:"coin"`
-	Amount       float32   `json:"amount"`
-	PlantDate    time.Time `json:"plantDate,omitempty"`
-	HarvestDate  time.Time `json:"harvestDate,omitempty"`
-	PlantPrice   float32   `json:"plantPrice,omitempty"`
-	HarvestPrice *float32  `json:"harvestPrice,omitempty"`
-	Profit       *float32  `json:"profit,omitempty"`
+	ID           int        `json:"id,omitempty"`
+	UserID       int64      `json:"userId,omitempty"`
+	Coin         Ticker     `json:"coin"`
+	Amount       float32    `json:"amount"`
+	PlantDate    time.Time  `json:"plantDate,omitempty"`
+	HarvestDate  *time.Time `json:"harvestDate,omitempty"`
+	PlantPrice   float32    `json:"plantPrice,omitempty"`
+	HarvestPrice *float32   `json:"harvestPrice,omitempty"`
+	Profit       *float32   `json:"profit,omitempty"`
 }
 
 type CoinbasePriceResponse struct {
@@ -47,4 +47,9 @@ type CoinbasePriceResponse struct {
 		Currency string `json:"currency"`
 		Amount   string `json:"amount"`
 	} `json:"data"`
+}
+
+type PotWithPlant struct {
+	Plant
+	Pot
 }

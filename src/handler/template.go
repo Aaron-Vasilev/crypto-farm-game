@@ -14,8 +14,15 @@ import (
 )
 
 func Home(c echo.Context) error {
+	userId := auth.GetUserIDFromCtx(c)
 
-	return pages.Home(pages.HomeProps{}).Render(c.Request().Context(), c.Response())
+	plants, err := controller.GetPotsWithPlants(userId)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Something is wrong"})
+	}
+
+	return pages.Home(plants).Render(c.Request().Context(), c.Response())
 }
 
 func CreatePot(c echo.Context) error {

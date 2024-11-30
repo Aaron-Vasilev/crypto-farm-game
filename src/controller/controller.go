@@ -3,6 +3,7 @@ package controller
 import (
 	"crypto-farm/src/db"
 	t "crypto-farm/src/types"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -29,7 +30,8 @@ func CreatePot(userId int64) t.Pot {
 func CreateCoin(
 	userId int64,
 	coin t.Ticker,
-	plantDate, harvestDate time.Time,
+	plantDate time.Time,
+	harvestDate *time.Time,
 	plantPrice float32,
 ) (t.Plant, error) {
 	plant := t.Plant{
@@ -123,4 +125,55 @@ func GetPairPrice(t1, t2 t.Ticker) (float32, error) {
 	} else {
 		return float32(price), nil
 	}
+}
+
+func GetPotsWithPlants(userId int64) ([]t.PotWithPlant, error) {
+	var pp []t.PotWithPlant
+	query := "SELECT * FROM farm.pot po LEFT JOIN farm.plant pl ON po.plant_id = pl.id AND po.user_id = pl.user_id WHERE po.user_id=$1;"
+
+	rows, err := db.DB.Query(query, userId)
+
+	if err != nil {
+		return pp, err
+	}
+
+	for rows.Next() {
+		var p t.PotWithPlant
+		var plantId sql.NullInt32
+		var userId sql.NullInt64
+		var coin sql.NullString
+		var plantDate sql.NullTime
+		var plantPrice sql.NullFloat64
+
+		err := rows.Scan(
+			&p.Pot.ID,
+			&p.Pot.UserID,
+			&plantId,
+			&plantId,
+			&userId,
+			&coin,
+			&plantDate,
+			&p.Plant.HarvestDate,
+			&plantPrice,
+			&p.Plant.HarvestPrice,
+			&p.Plant.Profit,
+		)
+
+		if err != nil {
+			return pp, err
+		}
+
+		if plantId.Valid {
+			p.Plant.ID = int(plantId.Int32)
+			p.Pot.PlantID = &p.Plant.ID
+			p.Plant.UserID = userId.Int64
+			p.Plant.Coin = t.Ticker(coin.String)
+			p.Plant.PlantDate = plantDate.Time
+		}
+
+		pp = append(pp, p)
+	}
+	defer rows.Close()
+
+	return pp, nil
 }

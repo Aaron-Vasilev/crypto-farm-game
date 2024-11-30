@@ -1,18 +1,75 @@
 package pages
 
-import components "crypto-farm/src/components/layout"
+import (
+	comp "crypto-farm/src/components"
+	t "crypto-farm/src/types"
+)
 
-type HomeProps struct {
+func plantStage(p t.PotWithPlant) int {
+	if p.Pot.PlantID == nil {
+		return 0
+	} else if p.Plant.HarvestPrice == nil {
+		return 1
+	}
+
+	return 2
 }
 
-templ Home(props HomeProps) {
-	@components.Layout() {
-		<div class="px-[10%]">
-			<div class="flex gap-2.5">
-				<div class="h-10 w-10 border-2 border-black"></div>
-				<div class="h-10 w-10 border-2 border-black"></div>
-				<div class="h-10 w-10 border-2 border-black"></div>
-			</div>
+templ Home(plants []t.PotWithPlant) {
+	@comp.Layout() {
+		<div class="flex gap-2.5">
+			for _, plant := range plants {
+				<div
+					class="border-2 border-black"
+					onclick="openModal()"
+				>
+					@comp.Pot(plantStage(plant))
+				</div>
+			}
+		</div>
+		<div id="modal-container" class="relative">
+			@Modal()
 		</div>
 	}
+}
+
+templ Modal() {
+	<dialog
+		class="absolute p-4"
+	>
+		<h1>
+			Plant a crypto
+		</h1>
+		<div class="flex gap-2">
+			<form hx-post="/api/plant">
+				<div>
+					<label>
+						Ticker
+						<select name="ticker">
+							<option value="BTC">BTC</option>
+							<option value="DOGE">DOGE</option>
+						</select>
+					</label>
+				</div>
+				<div>
+					<label>
+						Hours
+						<span id="modal-hours-span">1</span>
+						<input
+							oninput="updateHoursValue()"
+							type="range"
+							id="modal-hours-range"
+							name="hours"
+							min="1"
+							max="24"
+						/>
+					</label>
+				</div>
+				<div class="flex gap-2">
+					<button type="submit">Plant</button>
+					<button onclick="closeModal()">Close</button>
+				</div>
+			</form>
+		</div>
+	</dialog>
 }

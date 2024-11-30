@@ -2,7 +2,7 @@ package router
 
 import (
 	"crypto-farm/src/handler"
-// 	"net/http"
+	// 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,7 +17,7 @@ func ConnectRoutes(app *echo.Echo) {
 	app.PUT("/api/plant", handler.HarvestCoin)
 	app.POST("/api/plant", handler.PlantCoin)
 
-// 	app.GET("/*", func(c echo.Context) error {
-// 		return c.Redirect(http.StatusFound, "/")
-// 	})
+	//	app.GET("/*", func(c echo.Context) error {
+	//		return c.Redirect(http.StatusFound, "/")
+	//	})
 }
