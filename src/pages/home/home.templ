@@ -5,31 +5,17 @@ import (
 	t "crypto-farm/src/types"
 )
 
-func plantStage(p t.PotWithPlant) int {
-	if p.Pot.PlantID == nil {
-		return 0
-	} else if p.Plant.HarvestPrice == nil {
-		return 1
-	}
-
-	return 2
-}
-
 templ Home(plants []t.PotWithPlant) {
 	@comp.Layout() {
-		<div class="flex gap-2.5">
+		<div class="mt-[550px] grid h-[100px] grid-cols-3">
 			for _, plant := range plants {
-				<div
-					class="border-2 border-black"
-					onclick="openModal()"
-				>
-					@comp.Pot(plantStage(plant))
-				</div>
+				@comp.Pot(plant)
 			}
 		</div>
 		<div id="modal-container" class="relative">
 			@Modal()
 		</div>
+		@comp.CoinMenu()
 	}
 }
 

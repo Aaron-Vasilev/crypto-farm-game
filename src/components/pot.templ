@@ -1,5 +1,10 @@
 package components
 
+import (
+	t "crypto-farm/src/types"
+	"strconv"
+)
+
 func src(kind int) string {
 	if kind == 0 {
 		return "/public/img/pot_empty.png"
@@ -9,9 +14,36 @@ func src(kind int) string {
 	return "/public/img/pot_grown.png"
 }
 
-templ Pot(kind int) {
-	<img
-		src={ src(kind) }
-		class=""
-	/>
+func plantStage(p t.PotWithPlant) int {
+	if p.Pot.Coin == "" {
+		return 0
+	} else if p.Pot.HarvestPrice == 0 {
+		return 1
+	}
+
+	return 2
+}
+
+func plantId(plant t.PotWithPlant) string {
+	return "potId" + strconv.Itoa(plant.Pot.ID)
+}
+
+script clickOnPot(plant t.PotWithPlant) {
+  window.vars.selectedPot = plant.ID
+}
+
+templ Pot(plant t.PotWithPlant) {
+	<div
+		id={ plantId(plant) }
+		class="border-2 border-black"
+		onclick={ clickOnPot(plant) }
+		hx-get={ "/api/pot/" + strconv.Itoa(plant.Pot.ID) }
+    hx-target="#modal-container"
+    hx-swap="innerHTML"
+	>
+		<img
+			src={ src(plantStage(plant)) }
+			class=""
+		/>
+	</div>
 }

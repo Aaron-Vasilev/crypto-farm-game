@@ -1,0 +1,27 @@
+package components
+
+import (
+	t "crypto-farm/src/types"
+	"fmt"
+)
+
+func formVals(plant t.Plant) string {
+	s := fmt.Sprintf("js:{potId: getSelectedPotId(), coin: '%s'}", plant.Coin)
+	return s
+}
+
+templ CoinMenuElement(plant t.Plant) {
+	<li>
+		<h1>
+			{ templ.JSONString(plant.Coin) }
+			<button
+				hx-post="/api/plant"
+				hx-swap="outerHTML"
+				hx-target="#potId1"
+				hx-vals={ formVals(plant) }
+			>
+				Seed
+			</button>
+		</h1>
+	</li>
+}

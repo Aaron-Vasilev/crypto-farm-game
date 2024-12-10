@@ -1,0 +1,17 @@
+package components
+
+import (
+    u "crypto-farm/src/utils"
+    t "crypto-farm/src/types"
+)
+
+templ PotModal(plant t.PotWithPlant) {
+	<dialog
+    open
+		class="absolute p-4 bg-red-100 h-4 w-7"
+  >
+    if u.PlantIsReady(plant.Pot) {
+      ready
+    }
+  </dialog>
+}

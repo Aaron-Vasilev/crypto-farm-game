@@ -11,23 +11,14 @@ CREATE TABLE farm.user
 
 CREATE TYPE farm.tickers AS ENUM ('BTC', 'TON', 'ETH', 'DOGE', 'SOL', 'NEAR');
 
-CREATE TABLE farm.plant
-(
-  id SERIAL PRIMARY KEY,
-  user_id BIGINT REFERENCES farm.user(id) NOT NULL,
-  coin tickers NOT NULL,
-  amount FLOAT NOT NULL,
-  plant_date TIMESTAMP DEFAULT NOW(),
-  harvest_date TIMESTAMP,
-  plant_price FLOAT NOT NULL,
-  harvest_price FLOAT,
-  profit FLOAT
-);
-
 CREATE TABLE farm.pot
 (
   id SERIAL PRIMARY KEY,
   user_id BIGINT REFERENCES farm.user(id) NOT NULL,
-  plant_id INT REFERENCES farm.plant(id)
+  coin tickers,
+  plant_time TIMESTAMP,
+  harvest_time TIMESTAMP,
+  plant_price FLOAT,
+  harvest_price FLOAT
 );
 

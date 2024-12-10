@@ -11,9 +11,13 @@ type User struct {
 }
 
 type Pot struct {
-	ID      int
-	UserID  int64
-	PlantID *int
+	ID           int
+	UserID       int64
+	Coin         Ticker
+	PlantTime    time.Time
+	HarvestTime  time.Time
+	PlantPrice   float32
+	HarvestPrice float32
 }
 
 type Ticker string
@@ -28,17 +32,11 @@ const (
 	USD  Ticker = "USD"
 )
 
-// NOTE not sure if I need json
 type Plant struct {
-	ID           int        `json:"id,omitempty"`
-	UserID       int64      `json:"userId,omitempty"`
-	Coin         Ticker     `json:"coin"`
-	Amount       float32    `json:"amount"`
-	PlantDate    time.Time  `json:"plantDate,omitempty"`
-	HarvestDate  *time.Time `json:"harvestDate,omitempty"`
-	PlantPrice   float32    `json:"plantPrice,omitempty"`
-	HarvestPrice *float32   `json:"harvestPrice,omitempty"`
-	Profit       *float32   `json:"profit,omitempty"`
+	Coin    Ticker
+	Cost    int
+	Exp     int
+	Minutes int
 }
 
 type CoinbasePriceResponse struct {

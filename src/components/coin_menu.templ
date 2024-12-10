@@ -1,0 +1,12 @@
+package components
+
+import (
+	"crypto-farm/src/consts"
+	t "crypto-farm/src/types"
+)
+
+templ CoinMenu() {
+	<menu class="sticky bottom-0 bg-zinc-50">
+		@CoinMenuElement(consts.Plants[t.DOGE])
+	</menu>
+}

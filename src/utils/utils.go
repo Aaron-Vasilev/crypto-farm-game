@@ -1,6 +1,7 @@
 package utils
 
 import (
+	t "crypto-farm/src/types"
 	"net/http"
 	"os"
 	"strconv"
@@ -45,4 +46,12 @@ func Int(i int) string {
 
 func PublicUrl(path string) string {
 	return os.Getenv("PUBLIC_URL") + path
+}
+
+func PlantIsReady(pot t.Pot) bool {
+	if pot.HarvestPrice == 0 && !pot.HarvestTime.IsZero() && time.Now().UTC().After(pot.HarvestTime) {
+		return true
+	} else {
+		return false
+	}
 }

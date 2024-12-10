@@ -2,11 +2,15 @@ package handler
 
 import (
 	"crypto-farm/src/auth"
+	"crypto-farm/src/components"
+	"crypto-farm/src/consts"
 	"crypto-farm/src/controller"
 	pages "crypto-farm/src/pages/home"
 	t "crypto-farm/src/types"
+	"crypto-farm/src/utils"
 	"fmt"
 	"net/http"
+
 	"strconv"
 	"time"
 
@@ -35,74 +39,75 @@ func CreatePot(c echo.Context) error {
 	return c.JSON(http.StatusOK, pot)
 }
 
+type plantCoin struct {
+	Coin    t.Ticker
+	PlantID int
+}
+
 func PlantCoin(c echo.Context) error {
-	//TODO get userID from context
-	var userID int64 = 1
-	var plant t.Plant
+	userId := auth.GetUserIDFromCtx(c)
+	coin := t.Ticker(c.Request().FormValue("coin"))
+	potId, err := strconv.Atoi(c.Request().FormValue("potId"))
 
-	if err := c.Bind(&plant); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Ticker with this name doesn't exist or date is not correct"})
+	//TODO check that pot is empty
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "No potId in the request"})
 	}
-	//TODO check that HarvestDate is valid
 
-	price, err := controller.GetPairPrice(plant.Coin, t.USD)
+	price, err := controller.GetPairPrice(coin, t.USD)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "This ticker doesn't exist"})
 	}
 
-	plant, err = controller.CreateCoin(
-		userID,
-		plant.Coin,
-		time.Now(),
-		plant.HarvestDate,
+	plant := consts.Plants[coin]
+	plantTime := time.Now().UTC()
+	harvestTime := plantTime.Add(time.Minute * time.Duration(plant.Minutes))
+
+	pot, err := controller.PlantCoin(
+		userId,
+		potId,
+		coin,
+		harvestTime,
+		harvestTime,
 		price,
 	)
 
-	return c.JSON(http.StatusOK, plant)
+	return components.Pot(t.PotWithPlant{
+		Pot:   pot,
+		Plant: plant,
+	}).Render(c.Request().Context(), c.Response())
 }
 
-func isPlantReady(plant t.Plant) bool {
-	// TODO
-	return true
-}
-
-func HarvestCoin(c echo.Context) error {
+func CheckPlant(c echo.Context) error {
 	userId := auth.GetUserIDFromCtx(c)
-	plantId, err := strconv.Atoi(c.QueryParam("plantId"))
+	potId, err := strconv.Atoi(c.Param("potId"))
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "No plantId in the request"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "No potId in the request"})
 	}
 
-	plant, err := controller.GetPlant(userId, plantId)
+	pot, err := controller.GetPotById(userId, potId)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error":   "The plant doesn't exist",
-			"userId":  fmt.Sprintf("%d", userId),
-			"plantId": c.QueryParam("plantId"),
-		})
+		fmt.Println("✡️  line 92 err", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "The pot doesn't exist"})
 	}
 
-	if isPlantReady(plant) {
-		harvestPrice, err := controller.GetPairPrice(plant.Coin, t.USD)
+	if utils.PlantIsReady(pot) {
+		price, err := controller.GetPairPrice(pot.Coin, t.USD)
 
 		if err != nil {
-			fmt.Println("✡️  line 84 err", err)
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Oops, Something went wrong"})
-		}
-		profit := harvestPrice - plant.PlantPrice
-
-		plant, err = controller.HarvestPlant(userId, plantId, harvestPrice, profit)
-
-		if err != nil {
-			fmt.Println("✡️  line 92 err", err)
-			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Oops, Something went wrong"})
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "This ticker doesn't exist"})
 		} else {
-			return c.JSON(http.StatusOK, plant)
+			controller.UpdateHarvestPrice(userId, potId, price)
+
+			pot.PlantPrice = price
 		}
-	} else {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Plant is not ready"})
 	}
+
+	return components.PotModal(t.PotWithPlant{
+		Pot:   pot,
+		Plant: consts.Plants[pot.Coin],
+	}).Render(c.Request().Context(), c.Response())
 }
